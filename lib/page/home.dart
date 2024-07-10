@@ -7,12 +7,14 @@ class Home extends GetView<HomeController> {
 
   final destinations = <NavigationDestination>[
     const NavigationDestination(
-      icon: Icon(Icons.home),
+      icon: Icon(Icons.home_outlined),
       label: "主页",
+      selectedIcon: Icon(Icons.home),
     ),
     const NavigationDestination(
-      icon: Icon(Icons.settings),
+      icon: Icon(Icons.settings_outlined),
       label: "设置",
+      selectedIcon: Icon(Icons.settings),
     ),
   ];
 
