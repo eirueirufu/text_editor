@@ -5,6 +5,8 @@ import 'package:text_editor/page/home_ctrl.dart';
 class Home extends GetView<HomeController> {
   Home({super.key});
 
+  static const routeName = "/home";
+
   final destinations = <NavigationDestination>[
     const NavigationDestination(
       icon: Icon(Icons.home_outlined),
