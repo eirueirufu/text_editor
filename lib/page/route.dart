@@ -18,10 +18,11 @@ class Pages {
     ),
     GetPage(
       name: Edit.routeName,
-      page: () => Edit(),
+      page: () => const Edit(),
       bindings: [
         BindingsBuilder.put(
           () => EditController(
+            name: Get.arguments[0],
             quillCtrl: QuillController.basic(),
           ),
         ),

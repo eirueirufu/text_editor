@@ -23,9 +23,6 @@ class Home extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('text_editor'),
-      ),
       body: SafeArea(
         child: Obx(
           () => IndexedStack(
