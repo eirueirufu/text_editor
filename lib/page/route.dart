@@ -4,6 +4,7 @@ import 'package:text_editor/page/edit.dart';
 import 'package:text_editor/page/edit_ctrl.dart';
 import 'package:text_editor/page/home.dart';
 import 'package:text_editor/page/home_ctrl.dart';
+import 'package:text_editor/page/setting_ctrl.dart';
 
 class Pages {
   static final routes = [
@@ -13,6 +14,7 @@ class Pages {
       bindings: [
         BindingsBuilder.put(() => HomeController()),
         BindingsBuilder.put(() => BookListController()),
+        BindingsBuilder.put(() => SettingController()),
       ],
     ),
     GetPage(

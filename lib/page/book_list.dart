@@ -12,7 +12,7 @@ class BookList extends GetView<BookListController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('文本列表'),
+        title: const Text('主页'),
         actions: [
           addBookButton(context),
         ],

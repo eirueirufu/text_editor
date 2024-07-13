@@ -4,11 +4,20 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:text_editor/model/book.dart';
 import 'package:text_editor/page/route.dart';
 import 'package:text_editor/service/db.dart';
+import 'package:text_editor/service/sp.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
   await initDb();
+  await initSp();
   runApp(const MyApp());
+}
+
+Future<void> initSp() async {
+  await Get.putAsync(() => SpService().init());
 }
 
 Future<void> initDb() async {
