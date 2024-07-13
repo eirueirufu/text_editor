@@ -41,6 +41,7 @@ class EditController extends GetxController {
     super.onClose();
     final ops = doc.toDelta().toJson();
     book.ops = ops;
+    book.updatedAt = DateTime.now();
     dbService.bookBox.put(book.id, book);
   }
 
