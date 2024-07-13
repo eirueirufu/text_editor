@@ -29,7 +29,7 @@ class BookList extends GetView<BookListController> {
                 style: Theme.of(context).textTheme.labelMedium,
               ),
               trailing: listTileMoreAction(context, book),
-              onTap: () => Get.toNamed(Edit.routeName, arguments: [book.name]),
+              onTap: () => Get.toNamed(Edit.routeName, arguments: [book.id]),
             );
           },
         ),

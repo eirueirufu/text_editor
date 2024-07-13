@@ -1,4 +1,3 @@
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:text_editor/page/book_list_ctrl.dart';
 import 'package:text_editor/page/edit.dart';
@@ -22,8 +21,7 @@ class Pages {
       bindings: [
         BindingsBuilder.put(
           () => EditController(
-            name: Get.arguments[0],
-            quillCtrl: QuillController.basic(),
+            id: Get.arguments[0],
           ),
         ),
       ],

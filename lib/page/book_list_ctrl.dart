@@ -26,6 +26,7 @@ class BookListController extends GetxController {
       id: now.millisecondsSinceEpoch ~/ 1000,
       name: name,
       updatedAt: now,
+      ops: [],
     );
     dbService.bookBox.put(book.id, book);
     fetchList();
@@ -42,6 +43,7 @@ class BookListController extends GetxController {
       return;
     }
     book.name = name;
+    book.updatedAt = DateTime.now();
     dbService.bookBox.put(book.id, book);
     fetchList();
   }

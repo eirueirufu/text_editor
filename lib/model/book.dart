@@ -8,6 +8,7 @@ class Book {
     required this.id,
     required this.name,
     required this.updatedAt,
+    required this.ops,
   });
 
   @HiveField(0)
@@ -18,4 +19,7 @@ class Book {
 
   @HiveField(2)
   DateTime updatedAt;
+
+  @HiveField(3, defaultValue: [])
+  List<dynamic> ops;
 }

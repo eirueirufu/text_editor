@@ -20,19 +20,22 @@ class BookAdapter extends TypeAdapter<Book> {
       id: fields[0] as int,
       name: fields[1] as String,
       updatedAt: fields[2] as DateTime,
+      ops: fields[3] == null ? [] : (fields[3] as List).cast<dynamic>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Book obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.updatedAt);
+      ..write(obj.updatedAt)
+      ..writeByte(3)
+      ..write(obj.ops);
   }
 
   @override

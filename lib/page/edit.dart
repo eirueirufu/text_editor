@@ -12,7 +12,7 @@ class Edit extends GetView<EditController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(controller.name),
+        title: Text(controller.book.name),
       ),
       body: Column(
         children: [
