@@ -41,55 +41,58 @@ class BookList extends GetView<BookListController> {
     return IconButton(
       onPressed: () => showModalBottomSheet(
         context: context,
-        builder: (BuildContext context) => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text("重命名"),
-              onTap: () async {
-                Get.back();
-                var name = "";
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    scrollable: true,
-                    title: const Text("重命名"),
-                    content: TextField(
-                      autofocus: true,
-                      decoration: const InputDecoration(
-                        labelText: "名称",
-                      ),
-                      onChanged: (value) {
-                        name = value;
-                      },
-                    ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () => Get.back(),
-                        child: const Text("取消"),
-                      ),
-                      FilledButton(
-                        onPressed: () {
-                          controller.renameBook(book.id, name);
-                          Get.back();
+        builder: (BuildContext context) => Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text("重命名"),
+                onTap: () async {
+                  Get.back();
+                  var name = "";
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      scrollable: true,
+                      title: const Text("重命名"),
+                      content: TextField(
+                        autofocus: true,
+                        decoration: const InputDecoration(
+                          labelText: "名称",
+                        ),
+                        onChanged: (value) {
+                          name = value;
                         },
-                        child: const Text("确认"),
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete),
-              title: const Text("删除"),
-              onTap: () async {
-                controller.deleteBook(book.id);
-                Get.back();
-              },
-            ),
-          ],
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () => Get.back(),
+                          child: const Text("取消"),
+                        ),
+                        FilledButton(
+                          onPressed: () {
+                            controller.renameBook(book.id, name);
+                            Get.back();
+                          },
+                          child: const Text("确认"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text("删除"),
+                onTap: () async {
+                  controller.deleteBook(book.id);
+                  Get.back();
+                },
+              ),
+            ],
+          ),
         ),
       ),
       icon: const Icon(Icons.more_vert),

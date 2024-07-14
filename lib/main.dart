@@ -5,11 +5,13 @@ import 'package:text_editor/model/book.dart';
 import 'package:text_editor/page/route.dart';
 import 'package:text_editor/service/db.dart';
 import 'package:text_editor/service/sp.dart';
+import 'package:text_editor/util/deep_link.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await initDeepLink();
   await dotenv.load(fileName: ".env");
   await initDb();
   await initSp();

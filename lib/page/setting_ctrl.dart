@@ -1,7 +1,18 @@
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:text_editor/service/sp.dart';
 
 class SettingController extends GetxController {
   final spService = Get.find<SpService>();
-  var email = "".obs;
+
+  var user = Rx<User?>(null);
+
+  void setUser(User? user) {
+    this.user.value = user;
+  }
+
+  Future<void> signOut() async {
+    await spService.signOut();
+    setUser(null);
+  }
 }

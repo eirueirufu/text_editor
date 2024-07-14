@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SpService extends GetxService {
   late SupabaseClient supabase;
-
   User? user;
 
   Future<SpService> init() async {
@@ -13,15 +12,6 @@ class SpService extends GetxService {
       anonKey: dotenv.get('SUPABASE_ANON_KEY'),
     );
     supabase = Supabase.instance.client;
-
-    supabase.auth.onAuthStateChange.listen(
-      (data) {
-        final event = data.event;
-        if (event == AuthChangeEvent.signedIn) {
-          user = data.session?.user;
-        }
-      },
-    );
     return this;
   }
 
