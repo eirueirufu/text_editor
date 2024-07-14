@@ -17,12 +17,18 @@ class Setting extends GetView<SettingController> {
           Obx(
             () => controller.user.value == null
                 ? ListTile(
-                    leading: const Icon(
-                      Icons.question_mark,
+                    leading: const CircleAvatar(
+                      child: Icon(
+                        Icons.question_mark,
+                      ),
                     ),
                     title: Text(
                       "未登录",
                       style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    subtitle: Text(
+                      "登录开启网络同步 >",
+                      style: Theme.of(context).textTheme.labelSmall,
                     ),
                     onTap: () => showModalBottomSheet(
                       context: context,
@@ -56,8 +62,10 @@ class Setting extends GetView<SettingController> {
                     leading:
                         controller.user.value!.userMetadata?["avatar_url"] ==
                                 null
-                            ? const Icon(
-                                Icons.account_circle,
+                            ? const CircleAvatar(
+                                child: Icon(
+                                  Icons.account_circle,
+                                ),
                               )
                             : CircleAvatar(
                                 backgroundImage: NetworkImage(controller
@@ -65,7 +73,11 @@ class Setting extends GetView<SettingController> {
                               ),
                     title: Text(
                       controller.user.value!.userMetadata?["user_name"] ?? "未知",
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    subtitle: Text(
+                      "编辑",
+                      style: Theme.of(context).textTheme.labelSmall,
                     ),
                     onTap: () => showModalBottomSheet(
                       context: context,
