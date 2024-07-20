@@ -1298,8 +1298,16 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.0+2"
+  wasm_run_flutter:
+    dependency: "direct main"
+    description:
+      name: wasm_run_flutter
+      sha256: "9807fd559676614350d5480846de29aa687a1f48b6a1b438cf120e01cffd84a0"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.0"
   wasm_wit_component:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: wasm_wit_component
       sha256: ea7c8e4fdd5ddde1523ee22b85321145e54fcb63708c00f63c3f264a42e2ab11

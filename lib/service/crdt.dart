@@ -8,7 +8,7 @@ class CrdtService extends GetxService {
 
   Future<CrdtService> init() async {
     world = await createYCrdt(
-      wasiConfig: const WasiConfig(preopenedDirs: [], webBrowserFileSystem: {}),
+      wasiConfig: WasiConfig(preopenedDirs: [], webBrowserFileSystem: {}),
       imports: YCrdtWorldImports(
         eventCallback: ({required event, required functionId}) {},
         eventDeepCallback: ({required event, required functionId}) {},

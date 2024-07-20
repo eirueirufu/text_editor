@@ -46,8 +46,8 @@ class EditController extends GetxController {
           crdtService.world.yDocMethods.yDocDispose(ref: YDoc.fromJson([p0])),
     );
     docFinalizer.attach(crdtDoc, crdtDoc.ref);
-    crdtText = crdtService.world.yDocMethods
-        .yDocText(ref: crdtDoc, name: id.toString());
+    crdtText =
+        crdtService.world.yDocMethods.yDocText(ref: crdtDoc, name: "book_1");
 
     if (book.ops.isNotEmpty) {
       final delta = Delta.fromJson(book.ops);
@@ -60,19 +60,7 @@ class EditController extends GetxController {
       document: doc,
       selection: const TextSelection.collapsed(offset: 0),
     );
-    quillCtrl.changes.listen((event) {
-      if (event.source == ChangeSource.remote) {
-        return;
-      }
-      final ops = event.change.operations;
-      crdtService.operationsApplyToText(crdtText, ops);
-
-      final state =
-          crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok;
-
-      chan.sendBroadcastMessage(
-          event: "book_1", payload: Map()..["state"] = state);
-    });
+    quillCtrl.changes.listen(listenFn);
 
     chan
         .onBroadcast(
@@ -90,8 +78,27 @@ class EditController extends GetxController {
 
               crdtService.world.yDocMethods
                   .applyUpdate(ref: crdtDoc, diff: update, origin: origin);
+
+              final ops = crdtService.crdtTextToOperations(crdtText);
+
+              quillCtrl.setContents(Delta.fromOperations(ops));
+              quillCtrl.changes.listen(listenFn);
             })
         .subscribe();
+  }
+
+  void listenFn(DocChange event) {
+    if (event.source == ChangeSource.remote) {
+      return;
+    }
+    final ops = event.change.operations;
+    crdtService.operationsApplyToText(crdtText, ops);
+
+    final state =
+        crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok;
+
+    chan.sendBroadcastMessage(
+        event: "book_1", payload: Map()..["state"] = state);
   }
 
   @override
