@@ -39,6 +39,20 @@ class Setting extends GetView<SettingController> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            SupaEmailAuth(
+                              onSignInComplete: (response) {
+                                controller.setUser(response.user);
+                                Get.back();
+                              },
+                              onSignUpComplete: (response) {
+                                controller.setUser(response.user);
+                                Get.back();
+                              },
+                              onError: (error) {
+                                showInfoDialog(
+                                    context, "登录失败", error.toString());
+                              },
+                            ),
                             SupaSocialsAuth(
                               socialProviders: const [
                                 OAuthProvider.github,
@@ -49,8 +63,8 @@ class Setting extends GetView<SettingController> {
                                 Get.back();
                               },
                               onError: (error) {
-                                Get.snackbar("登录失败", error.toString());
-                                Get.back();
+                                showInfoDialog(
+                                    context, "登录失败", error.toString());
                               },
                               redirectUrl:
                                   "eirueirufutexteditor://login-callback/",
@@ -128,6 +142,22 @@ class Setting extends GetView<SettingController> {
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showInfoDialog(BuildContext context, String title, subTitle) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(subTitle),
+        actions: [
+          FilledButton(
+            child: const Text("确定"),
+            onPressed: () => Get.back(),
           ),
         ],
       ),
