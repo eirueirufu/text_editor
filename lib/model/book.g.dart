@@ -19,8 +19,7 @@ class BookAdapter extends TypeAdapter<Book> {
     return Book(
       name: fields[0] as String,
       updatedAt: fields[1] as DateTime,
-      ops: fields[2] == null ? [] : (fields[2] as List).cast<dynamic>(),
-    );
+    )..state = fields[2] == null ? [] : (fields[2] as List).cast<int>();
   }
 
   @override
@@ -32,7 +31,7 @@ class BookAdapter extends TypeAdapter<Book> {
       ..writeByte(1)
       ..write(obj.updatedAt)
       ..writeByte(2)
-      ..write(obj.ops);
+      ..write(obj.state);
   }
 
   @override

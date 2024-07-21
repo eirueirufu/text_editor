@@ -13,6 +13,22 @@ class Edit extends GetView<EditController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(controller.book.name),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Obx(
+              () => controller.saving.value
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                      ),
+                    )
+                  : const Icon(Icons.check),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [

@@ -7,7 +7,6 @@ class Book {
   Book({
     required this.name,
     required this.updatedAt,
-    required this.ops,
   });
 
   @HiveField(0)
@@ -17,5 +16,5 @@ class Book {
   DateTime updatedAt;
 
   @HiveField(2, defaultValue: [])
-  List<dynamic> ops;
+  List<int> state = [];
 }

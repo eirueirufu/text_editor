@@ -25,7 +25,6 @@ class BookListController extends GetxController {
     final book = Book(
       name: name,
       updatedAt: now,
-      ops: [],
     );
     dbService.bookBox.put(book.name, book);
     fetchList();

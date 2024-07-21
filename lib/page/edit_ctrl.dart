@@ -17,6 +17,7 @@ class EditController extends GetxController {
   final spService = Get.find<SpService>();
 
   final String name;
+  final saving = false.obs;
   late Book book;
   late QuillController quillCtrl;
   late Document doc;
@@ -49,14 +50,23 @@ class EditController extends GetxController {
           crdtService.world.yDocMethods.yDocDispose(ref: YDoc.fromJson([p0])),
     );
     docFinalizer.attach(crdtDoc, crdtDoc.ref);
-    crdtText = crdtService.world.yDocMethods.yDocText(ref: crdtDoc, name: name);
+    crdtText =
+        crdtService.world.yDocMethods.yDocText(ref: crdtDoc, name: "text");
 
-    if (book.ops.isNotEmpty) {
-      final delta = Delta.fromJson(book.ops);
+    if (book.state.isNotEmpty) {
+      final origin =
+          crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok!;
+      final update = Uint8List.fromList(book.state);
+      crdtService.world.yDocMethods
+          .applyUpdate(ref: crdtDoc, diff: update, origin: origin);
+
+      final ops = crdtService.crdtTextToOperations(crdtText);
+
+      final delta = Delta.fromOperations(ops);
       doc = Document.fromDelta(delta);
+    } else {
+      crdtService.operationsApplyToText(crdtText, doc.toDelta().operations);
     }
-
-    crdtService.operationsApplyToText(crdtText, doc.toDelta().operations);
 
     quillCtrl = QuillController(
       document: doc,
@@ -116,20 +126,25 @@ class EditController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    save();
+    _save();
   }
 
   void save() {
+    saving.value = true;
     EasyDebounce.debounce(
       'save',
       const Duration(milliseconds: 1000),
-      () => _save(),
+      () {
+        _save();
+        saving.value = false;
+      },
     );
   }
 
   void _save() {
-    final ops = quillCtrl.document.toDelta().toJson();
-    book.ops = ops;
+    final state =
+        crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok!;
+    book.state = state;
     book.updatedAt = DateTime.now();
     dbService.bookBox.put(book.name, book);
   }
