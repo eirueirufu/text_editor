@@ -23,7 +23,7 @@ class Pages {
       bindings: [
         BindingsBuilder.put(
           () => EditController(
-            id: Get.arguments[0],
+            name: Get.arguments[0],
           ),
         ),
       ],

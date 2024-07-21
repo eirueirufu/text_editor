@@ -14,7 +14,7 @@ class EditController extends GetxController {
   final crdtService = Get.find<CrdtService>();
   final spService = Get.find<SpService>();
 
-  final int id;
+  final String name;
   late Book book;
   late QuillController quillCtrl;
   late Document doc;
@@ -24,7 +24,7 @@ class EditController extends GetxController {
 
   late RealtimeChannel chan;
 
-  EditController({required this.id});
+  EditController({required this.name});
 
   @override
   void onInit() async {
@@ -81,6 +81,7 @@ class EditController extends GetxController {
 
               final ops = crdtService.crdtTextToOperations(crdtText);
 
+              print(ops);
               quillCtrl.setContents(Delta.fromOperations(ops));
               quillCtrl.changes.listen(listenFn);
             })
@@ -104,13 +105,13 @@ class EditController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    final ops = doc.toDelta().toJson();
+    final ops = quillCtrl.document.toDelta().toJson();
     book.ops = ops;
     book.updatedAt = DateTime.now();
-    dbService.bookBox.put(book.id, book);
+    dbService.bookBox.put(book.name, book);
   }
 
   void fetchText() {
-    book = dbService.bookBox.get(id)!;
+    book = dbService.bookBox.get(name)!;
   }
 }

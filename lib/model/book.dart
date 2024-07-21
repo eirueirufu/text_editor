@@ -5,21 +5,17 @@ part 'book.g.dart';
 @HiveType(typeId: 0)
 class Book {
   Book({
-    required this.id,
     required this.name,
     required this.updatedAt,
     required this.ops,
   });
 
   @HiveField(0)
-  int id;
-
-  @HiveField(1)
   String name;
 
-  @HiveField(2)
+  @HiveField(1)
   DateTime updatedAt;
 
-  @HiveField(3, defaultValue: [])
+  @HiveField(2, defaultValue: [])
   List<dynamic> ops;
 }

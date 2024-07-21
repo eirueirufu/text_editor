@@ -29,7 +29,7 @@ class BookList extends GetView<BookListController> {
                 style: Theme.of(context).textTheme.labelMedium,
               ),
               trailing: listTileMoreAction(context, book),
-              onTap: () => Get.toNamed(Edit.routeName, arguments: [book.id]),
+              onTap: () => Get.toNamed(Edit.routeName, arguments: [book.name]),
             );
           },
         ),
@@ -73,7 +73,11 @@ class BookList extends GetView<BookListController> {
                         ),
                         FilledButton(
                           onPressed: () {
-                            controller.renameBook(book.id, name);
+                            if (controller.checkExisted(name)) {
+                              showExistedMsg(context);
+                              return;
+                            }
+                            controller.renameBook(book.name, name);
                             Get.back();
                           },
                           child: const Text("确认"),
@@ -87,7 +91,7 @@ class BookList extends GetView<BookListController> {
                 leading: const Icon(Icons.delete),
                 title: const Text("删除"),
                 onTap: () async {
-                  controller.deleteBook(book.id);
+                  controller.deleteBook(book.name);
                   Get.back();
                 },
               ),
@@ -96,6 +100,21 @@ class BookList extends GetView<BookListController> {
         ),
       ),
       icon: const Icon(Icons.more_vert),
+    );
+  }
+
+  Future<dynamic> showExistedMsg(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: const Text("文件已存在"),
+        actions: [
+          FilledButton(
+            child: const Text("确认"),
+            onPressed: () => Get.back(),
+          )
+        ],
+      ),
     );
   }
 
@@ -124,6 +143,10 @@ class BookList extends GetView<BookListController> {
               ),
               FilledButton(
                 onPressed: () {
+                  if (controller.checkExisted(name)) {
+                    showExistedMsg(context);
+                    return;
+                  }
                   controller.addBook(name);
                   Get.back();
                 },

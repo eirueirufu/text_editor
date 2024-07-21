@@ -23,28 +23,33 @@ class BookListController extends GetxController {
   void addBook(String name) {
     final now = DateTime.now();
     final book = Book(
-      id: now.millisecondsSinceEpoch ~/ 1000,
       name: name,
       updatedAt: now,
       ops: [],
     );
-    dbService.bookBox.put(book.id, book);
+    dbService.bookBox.put(book.name, book);
     fetchList();
   }
 
-  void deleteBook(int id) {
-    dbService.bookBox.delete(id);
+  void deleteBook(String name) {
+    dbService.bookBox.delete(name);
     fetchList();
   }
 
-  void renameBook(int id, String name) {
-    final book = dbService.bookBox.get(id);
+  void renameBook(String name, newName) {
+    final book = dbService.bookBox.get(name);
     if (book == null) {
       return;
     }
-    book.name = name;
+    dbService.bookBox.delete(book.name);
+    book.name = newName;
     book.updatedAt = DateTime.now();
-    dbService.bookBox.put(book.id, book);
+    dbService.bookBox.put(book.name, book);
     fetchList();
+  }
+
+  bool checkExisted(String name) {
+    final book = dbService.bookBox.get(name);
+    return book != null;
   }
 }
