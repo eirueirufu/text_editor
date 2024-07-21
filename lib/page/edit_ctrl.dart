@@ -97,10 +97,16 @@ class EditController extends GetxController {
     final ops = event.change.operations;
     crdtService.operationsApplyToText(crdtText, ops);
 
-    final state =
-        crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok;
-
-    chan?.sendBroadcastMessage(event: name, payload: Map()..["state"] = state);
+    EasyDebounce.debounce(
+      'send',
+      const Duration(milliseconds: 1000),
+      () {
+        final state =
+            crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok;
+        chan?.sendBroadcastMessage(
+            event: name, payload: Map()..["state"] = state);
+      },
+    );
   }
 
   @override
