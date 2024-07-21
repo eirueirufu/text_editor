@@ -48,6 +48,7 @@ dependencies:
   wasm_run_flutter: ^0.1.0
   wasm_wit_component: ^0.0.1
   easy_debounce: ^2.0.3
+  quiver: ^3.2.1
 
 dev_dependencies:
   flutter_test:

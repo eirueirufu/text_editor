@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:get/get.dart';
+import 'package:quiver/collection.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:text_editor/model/book.dart';
 import 'package:text_editor/service/crdt.dart';
@@ -77,6 +78,9 @@ class EditController extends GetxController {
               final update = Uint8List.fromList(
                   (state as List<dynamic>).map((e) => e as int).toList());
 
+              if (listsEqual(origin, update)) {
+                return;
+              }
               crdtService.world.yDocMethods
                   .applyUpdate(ref: crdtDoc, diff: update, origin: origin);
 
