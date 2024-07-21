@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SpService extends GetxService {
   late SupabaseClient supabase;
-  User? user;
 
   Future<SpService> init() async {
     await Supabase.initialize(

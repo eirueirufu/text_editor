@@ -7,6 +7,13 @@ class SettingController extends GetxController {
 
   var user = Rx<User?>(null);
 
+  @override
+  void onInit() {
+    super.onInit();
+
+    user.value = spService.supabase.auth.currentUser;
+  }
+
   void setUser(User? user) {
     this.user.value = user;
   }

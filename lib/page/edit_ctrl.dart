@@ -22,19 +22,20 @@ class EditController extends GetxController {
   late YDoc crdtDoc;
   late YText crdtText;
 
-  late RealtimeChannel chan;
+  RealtimeChannel? chan;
 
   EditController({required this.name});
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
-    chan = spService.supabase.channel(
-      "test",
-      opts: const RealtimeChannelConfig(
-        self: true,
-      ),
-    );
+    final user = spService.supabase.auth.currentUser;
+    if (user != null) {
+      chan = spService.supabase.channel(
+        user.id,
+        opts: const RealtimeChannelConfig(self: true, private: true),
+      );
+    }
 
     fetchText();
 
@@ -46,8 +47,7 @@ class EditController extends GetxController {
           crdtService.world.yDocMethods.yDocDispose(ref: YDoc.fromJson([p0])),
     );
     docFinalizer.attach(crdtDoc, crdtDoc.ref);
-    crdtText =
-        crdtService.world.yDocMethods.yDocText(ref: crdtDoc, name: "book_1");
+    crdtText = crdtService.world.yDocMethods.yDocText(ref: crdtDoc, name: name);
 
     if (book.ops.isNotEmpty) {
       final delta = Delta.fromJson(book.ops);
@@ -63,8 +63,8 @@ class EditController extends GetxController {
     quillCtrl.changes.listen(listenFn);
 
     chan
-        .onBroadcast(
-            event: "book_1",
+        ?.onBroadcast(
+            event: name,
             callback: (payload) {
               final origin = crdtService.world.yDocMethods
                   .encodeStateAsUpdate(ref: crdtDoc)
@@ -81,7 +81,6 @@ class EditController extends GetxController {
 
               final ops = crdtService.crdtTextToOperations(crdtText);
 
-              print(ops);
               quillCtrl.setContents(Delta.fromOperations(ops));
               quillCtrl.changes.listen(listenFn);
             })
@@ -98,8 +97,7 @@ class EditController extends GetxController {
     final state =
         crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok;
 
-    chan.sendBroadcastMessage(
-        event: "book_1", payload: Map()..["state"] = state);
+    chan?.sendBroadcastMessage(event: name, payload: Map()..["state"] = state);
   }
 
   @override
