@@ -119,7 +119,7 @@ class Setting extends GetView<SettingController> {
                   ),
           ),
           const SizedBox(
-            height: 12,
+            height: 8,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
