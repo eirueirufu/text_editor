@@ -88,7 +88,9 @@ class Setting extends GetView<SettingController> {
                                     .user.value!.userMetadata?["avatar_url"]),
                               ),
                     title: Text(
-                      controller.user.value!.userMetadata?["user_name"] ?? "未知",
+                      controller.user.value!.userMetadata?["user_name"] ??
+                          controller.user.value!.email ??
+                          "未知",
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     subtitle: Text(
