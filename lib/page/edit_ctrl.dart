@@ -8,6 +8,7 @@ import 'package:text_editor/service/crdt.dart';
 import 'package:text_editor/service/db.dart';
 import 'package:text_editor/service/sp.dart';
 import 'package:y_crdt/wit_world.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 
 class EditController extends GetxController {
   final dbService = Get.find<DbService>();
@@ -83,11 +84,13 @@ class EditController extends GetxController {
 
               quillCtrl.setContents(Delta.fromOperations(ops));
               quillCtrl.changes.listen(listenFn);
+              save();
             })
         .subscribe();
   }
 
   void listenFn(DocChange event) {
+    save();
     if (event.source == ChangeSource.remote) {
       return;
     }
@@ -103,6 +106,18 @@ class EditController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+    save();
+  }
+
+  void save() {
+    EasyDebounce.debounce(
+      'save',
+      const Duration(milliseconds: 1000),
+      () => _save(),
+    );
+  }
+
+  void _save() {
     final ops = quillCtrl.document.toDelta().toJson();
     book.ops = ops;
     book.updatedAt = DateTime.now();

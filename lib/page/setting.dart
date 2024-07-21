@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
@@ -12,7 +14,7 @@ class Setting extends GetView<SettingController> {
       appBar: AppBar(
         title: const Text('设置'),
       ),
-      body: Column(
+      body: ListView(
         children: [
           Obx(
             () => controller.user.value == null
@@ -99,6 +101,33 @@ class Setting extends GetView<SettingController> {
                       ),
                     ),
                   ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: Text(
+              "关于",
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.warning),
+            title: const Text("免责声明"),
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                content: const Text("占位"),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () => exit(0),
+                    child: const Text("不接受"),
+                  ),
+                  FilledButton(
+                    child: const Text("接受"),
+                    onPressed: () => Get.back(),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
