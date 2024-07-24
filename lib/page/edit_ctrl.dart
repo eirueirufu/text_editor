@@ -33,6 +33,7 @@ class EditController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+    EasyDebounce.cancel("save");
     crdtService.world.yDocMethods.yDocDestroy(ref: crdtDoc);
   }
 
@@ -89,8 +90,11 @@ class EditController extends GetxController {
               final origin = crdtService.world.yDocMethods
                   .encodeStateAsUpdate(ref: crdtDoc)
                   .ok!;
-              final remoteNode = payload["node"] as int;
-              if (nodeKey == remoteNode) {
+              final remoteNode = payload["node"];
+              if (remoteNode == null) {
+                return;
+              }
+              if (nodeKey == remoteNode as int) {
                 return;
               }
               final state = (payload)["state"];
@@ -111,56 +115,41 @@ class EditController extends GetxController {
               quillCtrl.setContents(
                 Delta.fromOperations(ops),
               );
+              listenFn(null);
               quillCtrl.changes.listen(listenFn);
-              save();
             })
         .subscribe();
   }
 
-  void listenFn(DocChange event) {
-    save();
-    if (event.source == ChangeSource.remote) {
-      return;
+  void listenFn(DocChange? event) {
+    if (event != null) {
+      final ops = event.change.operations;
+      crdtService.operationsApplyToText(
+        crdtDoc,
+        crdtText,
+        ops,
+      );
     }
-    final ops = event.change.operations;
-    crdtService.operationsApplyToText(
-      crdtDoc,
-      crdtText,
-      ops,
-    );
 
-    EasyDebounce.debounce(
-      'send',
-      const Duration(milliseconds: 1000),
-      () {
-        final state =
-            crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok;
-        final payload = <String, dynamic>{};
-        payload["state"] = state;
-        payload["node"] = nodeKey;
-        chan?.sendBroadcastMessage(event: name, payload: payload);
-      },
-    );
-  }
-
-  void save() {
     saving.value = true;
     EasyDebounce.debounce(
       'save',
       const Duration(milliseconds: 1000),
       () async {
-        await _save();
+        final state =
+            crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok!;
+        book.state = state;
+        book.updatedAt = DateTime.now();
+        await dbService.bookBox.put(book.name, book);
+
+        final payload = <String, dynamic>{};
+        payload["state"] = state;
+        payload["node"] = nodeKey;
+        chan?.sendBroadcastMessage(event: name, payload: payload);
+
         saving.value = false;
       },
     );
-  }
-
-  Future<void> _save() async {
-    final state =
-        crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok!;
-    book.state = state;
-    book.updatedAt = DateTime.now();
-    await dbService.bookBox.put(book.name, book);
   }
 
   void fetchText() {
