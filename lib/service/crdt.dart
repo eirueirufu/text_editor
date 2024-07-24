@@ -18,8 +18,12 @@ class CrdtService extends GetxService {
     return this;
   }
 
-  operationsApplyToText(YText crdtText, List<Operation> operations) {
+  operationsApplyToText(
+      YDoc crdtDoc, YText crdtText, List<Operation> operations) {
     var index = 0;
+    final origin = world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok!;
+    final txn =
+        world.yDocMethods.yDocWriteTransaction(ref: crdtDoc, origin: origin);
     for (final op in operations) {
       JsonValueItem? attr;
       if (op.attributes != null) {
@@ -53,10 +57,12 @@ class CrdtService extends GetxService {
         case Operation.retainKey:
           if (attr != null) {
             world.yDocMethods.yTextFormat(
-                ref: crdtText,
-                index_: index,
-                length: op.value as int,
-                attributes: attr);
+              ref: crdtText,
+              index_: index,
+              length: op.value as int,
+              attributes: attr,
+              txn: txn,
+            );
           }
           index = op.value as int;
           break;
@@ -66,15 +72,21 @@ class CrdtService extends GetxService {
             index_: index,
             chunk: op.data as String,
             attributes: attr,
+            txn: txn,
           );
 
           break;
         case Operation.deleteKey:
           world.yDocMethods.yTextDelete(
-              ref: crdtText, index_: index, length: op.value as int);
+            ref: crdtText,
+            index_: index,
+            length: op.value as int,
+            txn: txn,
+          );
           break;
       }
     }
+    world.yDocMethods.transactionCommit(txn: txn);
   }
 
   List<Operation> crdtTextToOperations(YText crdtText) {

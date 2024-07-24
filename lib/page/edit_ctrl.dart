@@ -65,7 +65,11 @@ class EditController extends GetxController {
       final delta = Delta.fromOperations(ops);
       doc = Document.fromDelta(delta);
     } else {
-      crdtService.operationsApplyToText(crdtText, doc.toDelta().operations);
+      crdtService.operationsApplyToText(
+        crdtDoc,
+        crdtText,
+        doc.toDelta().operations,
+      );
     }
 
     quillCtrl = QuillController(
@@ -109,7 +113,11 @@ class EditController extends GetxController {
       return;
     }
     final ops = event.change.operations;
-    crdtService.operationsApplyToText(crdtText, ops);
+    crdtService.operationsApplyToText(
+      crdtDoc,
+      crdtText,
+      ops,
+    );
 
     EasyDebounce.debounce(
       'send',
