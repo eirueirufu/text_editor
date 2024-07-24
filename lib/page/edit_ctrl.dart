@@ -26,8 +26,15 @@ class EditController extends GetxController {
   late YText crdtText;
 
   RealtimeChannel? chan;
+  int nodeKey = DateTime.now().millisecondsSinceEpoch;
 
   EditController({required this.name});
+
+  @override
+  void onClose() {
+    super.onClose();
+    crdtService.world.yDocMethods.yDocDestroy(ref: crdtDoc);
+  }
 
   @override
   void onInit() {
@@ -44,14 +51,11 @@ class EditController extends GetxController {
 
     doc = Document();
 
-    crdtDoc = crdtService.world.yDocMethods.yDocNew();
-    final docFinalizer = Finalizer<int>(
-      (p0) =>
-          crdtService.world.yDocMethods.yDocDispose(ref: YDoc.fromJson([p0])),
+    crdtDoc = crdtService.world.yDocMethods.yDocNew(
+      options: const YDocOptions(skipGc: true),
     );
-    docFinalizer.attach(crdtDoc, crdtDoc.ref);
     crdtText =
-        crdtService.world.yDocMethods.yDocText(ref: crdtDoc, name: "text");
+        crdtService.world.yDocMethods.yDocText(ref: crdtDoc, name: "quill");
 
     if (book.state.isNotEmpty) {
       final origin =
@@ -85,6 +89,10 @@ class EditController extends GetxController {
               final origin = crdtService.world.yDocMethods
                   .encodeStateAsUpdate(ref: crdtDoc)
                   .ok!;
+              final remoteNode = payload["node"] as int;
+              if (nodeKey == remoteNode) {
+                return;
+              }
               final state = (payload)["state"];
               if (state == null) {
                 return;
@@ -100,7 +108,9 @@ class EditController extends GetxController {
 
               final ops = crdtService.crdtTextToOperations(crdtText);
 
-              quillCtrl.setContents(Delta.fromOperations(ops));
+              quillCtrl.setContents(
+                Delta.fromOperations(ops),
+              );
               quillCtrl.changes.listen(listenFn);
               save();
             })
@@ -125,16 +135,12 @@ class EditController extends GetxController {
       () {
         final state =
             crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok;
-        chan?.sendBroadcastMessage(
-            event: name, payload: Map()..["state"] = state);
+        final payload = <String, dynamic>{};
+        payload["state"] = state;
+        payload["node"] = nodeKey;
+        chan?.sendBroadcastMessage(event: name, payload: payload);
       },
     );
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-    _save();
   }
 
   void save() {
@@ -142,19 +148,19 @@ class EditController extends GetxController {
     EasyDebounce.debounce(
       'save',
       const Duration(milliseconds: 1000),
-      () {
-        _save();
+      () async {
+        await _save();
         saving.value = false;
       },
     );
   }
 
-  void _save() {
+  Future<void> _save() async {
     final state =
         crdtService.world.yDocMethods.encodeStateAsUpdate(ref: crdtDoc).ok!;
     book.state = state;
     book.updatedAt = DateTime.now();
-    dbService.bookBox.put(book.name, book);
+    await dbService.bookBox.put(book.name, book);
   }
 
   void fetchText() {
